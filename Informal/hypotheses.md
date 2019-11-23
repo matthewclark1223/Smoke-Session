@@ -1,6 +1,6 @@
 **Hypotheses**
 
-#Testing Atom, Markdown, and Github
+# Testing Atom, Markdown, and Github 
 
 > This is a quote
 
@@ -12,5 +12,3 @@ This is a nested list
   - list two
 
   ~~Strikethrough test~~
-
-  
