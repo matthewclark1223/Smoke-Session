@@ -1,6 +1,6 @@
-**Hypotheses**
+## Hypotheses
 
-# Testing Atom, Markdown, and Github 
+**Me testing Atom, Markdown, and Github *please delete when you are ready***
 
 > This is a quote
 
