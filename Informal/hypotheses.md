@@ -1,1 +1,4 @@
-**Test markdown file**
+**Hypotheses**
+
+#Testing Atom, Markdown, and Github
+ 
