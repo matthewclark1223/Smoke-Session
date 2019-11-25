@@ -1,0 +1,21 @@
+---
+title: "Rationale_and_Hypotheses"
+author: "Matt Clark"
+date: "11/22/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Project Rationale 
+
+
+## Hypotheses
+
+### H1
+
+### H2
+
+
