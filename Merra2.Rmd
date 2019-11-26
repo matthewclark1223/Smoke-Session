@@ -4,3 +4,37 @@ author: "Alex Killion"
 date: "11/26/2019"
 output: html_document
 ---
+
+Packages
+```{r}
+library(ncdf4)
+
+
+```
+
+Open netCDF **change dname
+```{r}
+# set path and filename
+ncpath <- "/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal"
+ncname <- "MERRA2_100.tavgM_2d_aer_Nx.198001.SUB"  
+ncfname <- paste(ncpath, ncname, ".nc", sep="")
+dname <- "pm2.5"
+
+ncin <- nc_open(ncfname)
+
+# get longitude and latitude and time
+lon <- ncvar_get(ncin,"lon")
+nlon <- dim(lon)
+lat <- ncvar_get(ncin,"lat")
+nlat <- dim(lat)
+print(c(nlon,nlat))
+
+time <- ncvar_get(ncin,"time")
+
+tunits <- ncatt_get(ncin,"time","units")
+nt <- dim(time) #dim() tells you number of timesteps 
+nt
+```
+
+Extract a Variable
+
