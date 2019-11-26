@@ -15,7 +15,7 @@ library(ncdf4)
 Open netCDF **change dname
 ```{r}
 # set path and filename
-ncpath <- "/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal"
+ncpath <- "/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/Merra2/"
 ncname <- "MERRA2_100.tavgM_2d_aer_Nx.198001.SUB"  
 ncfname <- paste(ncpath, ncname, ".nc", sep="")
 dname <- "pm2.5"
@@ -37,4 +37,16 @@ nt
 ```
 
 Extract a Variable
+```{r}
+# get temperature
+tmp_array <- ncvar_get(ncin,dname) #dname in 1st chunk needs to be correct variable name
+dlname <- ncatt_get(ncin,dname,"long_name")
+dunits <- ncatt_get(ncin,dname,"units")
+fillvalue <- ncatt_get(ncin,dname,"_FillValue")
+dim(tmp_array)
+
+#close file
+nc_close()
+
+```
 
