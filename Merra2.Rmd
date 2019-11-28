@@ -1,0 +1,76 @@
+---
+title: "Merra2"
+author: "Alex Killion"
+date: "11/26/2019"
+output: html_document
+---
+
+Packages
+```{r}
+library(ncdf4)
+library(chron)
+library(lattice)
+library(RColorBrewer)
+
+```
+
+Open netCDF **change dname
+```{r}
+# set path and filename
+ncpath <- "/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/Merra2/"
+ncname <- "MERRA2_100.tavgM_2d_aer_Nx.198001.SUB"  
+ncfname <- paste(ncpath, ncname, ".nc", sep="")
+dname <- "DUSMASS25"
+
+ncin <- nc_open(ncfname)
+
+# get longitude and latitude and time
+lon <- ncvar_get(ncin,"lon")
+nlon <- dim(lon)
+lat <- ncvar_get(ncin,"lat")
+nlat <- dim(lat)
+print(c(nlon,nlat))
+
+time <- ncvar_get(ncin,"time")
+
+tunits <- ncatt_get(ncin,"time","units")
+nt <- dim(time) #dim() tells you number of timesteps 
+nt
+```
+
+Extract a Variable
+```{r}
+# get temperature
+tmp_array <- ncvar_get(ncin,dname) #dname in 1st chunk needs to be correct variable name
+dlname <- ncatt_get(ncin,dname,"long_name")
+dunits <- ncatt_get(ncin,dname,"units")
+fillvalue <- ncatt_get(ncin,dname,"_FillValue")
+dim(tmp_array)
+
+#close file
+nc_close(ncfname)
+```
+
+Convert Time
+```{r}
+# convert time -- split the time units string into fields
+tustr <- strsplit(tunits$value, " ")
+tdstr <- strsplit(unlist(tustr)[3], "-")
+tmonth <- as.integer(unlist(tdstr)[2])
+tday <- as.integer(unlist(tdstr)[3])
+tyear <- as.integer(unlist(tdstr)[1])
+chron(time,origin=c(tmonth, tday, tyear))
+```
+
+Replace with NA
+```{r}
+# replace netCDF fill values with NA's
+tmp_array[tmp_array==fillvalue$value] <- NA
+```
+
+Map
+```{r}
+# quick map
+image(lon,lat,tmp_array, col=rev(brewer.pal(10,"RdBu")))
+```
+
