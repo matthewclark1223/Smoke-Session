@@ -12,9 +12,12 @@ library(chron)
 library(lattice)
 library(RColorBrewer)
 
+library(raster)
+library(rgdal)
 ```
 
-Open netCDF **change dname
+*For MATRIX* 
+Open netCDF 
 ```{r}
 # set path and filename
 ncpath <- "/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/Merra2/"
@@ -73,4 +76,34 @@ Map
 # quick map
 image(lon,lat,tmp_array, col=rev(brewer.pal(10,"RdBu")))
 ```
+
+*For Raster*
+Stack netCDF 
+```{r}
+filenames <- list.files(path="/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/Merra2/",
+                        pattern='*.nc',full.names=TRUE)
+smoke <- raster::stack(filenames, varname="DUSMASS25")
+
+```
+
+Import NPS Boundaries
+```{r}
+#Data From - https://public-nps.opendata.arcgis.com/datasets/national-park-service-park-unit-boundaries
+
+nps<-readOGR("/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/NPS_poly/NPS_poly.shp")
+
+#select only polygons designated as National Parks
+nps<-nps[nps@data$UNIT_TYPE=="National Park",]
+
+#remove National Park of American Samoa
+nps<-nps[nps@data$UNIT_CODE!="NPSA",]
+
+```
+
+Average PM2.5 in Boundaries 
+```{r}
+vals<-extract(all, nps)
+
+```
+
 
