@@ -115,7 +115,7 @@ names(park_codes)<-"park"
 
 ```
 
-Average PM2.5 in Boundaries 
+Mean PM2.5 in Parks 
 ```{r}
 
 #exact_extract - https://cran.r-project.org/web/packages/exactextractr/readme/README.html * see for other summary stats
@@ -124,17 +124,17 @@ poly<-sf::st_as_sfc(nps) #converts to new type of poly
 #loop to calculate polygons means and save vector
   for (i in 1:length (filenames)) {
     raster<-raster(filenames[i], varname="DUSMASS25")#convert smoke data to raster
-    mean<-exact_extract(raster, poly, 'mean') #extracts mean for each park
+    mean<-exact_extract(raster, poly, 'mean') #extracts mean for each park. Uses cells that intersect polygons. 
    date<-str_sub(filenames[i], -13,-8) #strips down filename to just date
   mean<-as.data.frame(mean) #convert to df
   names(mean)<-date #rename column with date
-  date_file<-paste0("/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output/",date)
+  date_file<-paste0("/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output_mean/",date)
    newname<-paste0(date_file, ".csv")
 write.csv(mean, newname, row.names = FALSE) #save as csv
 }
 
 #loads those .csv and makes into single df
-list_dates = list.files(path="/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output/", pattern="*.csv", full.names=TRUE)
+list_dates = list.files(path="/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output_mean/", pattern="*.csv", full.names=TRUE)
 
 final_means<-list_dates %>%
   map(read_csv) %>%
@@ -149,3 +149,69 @@ write.csv(final_means, "/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke
 ```
 
 
+Min PM2.5 in Parks 
+```{r}
+
+#exact_extract - https://cran.r-project.org/web/packages/exactextractr/readme/README.html * see for other summary stats
+poly<-sf::st_as_sfc(nps) #converts to new type of poly
+
+#loop to calculate polygons means and save vector
+  for (i in 1:length (filenames)) {
+    raster<-raster(filenames[i], varname="DUSMASS25")#convert smoke data to raster
+    min<-exact_extract(raster, poly, 'min') #extracts mean for each park. Uses cells that intersect polygons. 
+   date<-str_sub(filenames[i], -13,-8) #strips down filename to just date
+  min<-as.data.frame(min) #convert to df
+  names(min)<-date #rename column with date
+  date_file<-paste0("/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output_min/",date)
+   newname<-paste0(date_file, ".csv")
+write.csv(min, newname, row.names = FALSE) #save as csv
+}
+
+#loads those .csv and makes into single df
+list_dates = list.files(path="/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output_min/", pattern="*.csv", full.names=TRUE)
+
+final_mins<-list_dates %>%
+  map(read_csv) %>%
+  reduce(cbind)
+
+#append park code
+final_mins<-data.frame(park=park_codes, final_mins)
+
+#save
+write.csv(final_mins, "/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/interm_data/final_mins.csv", row.names = FALSE)
+
+```
+
+
+Max PM2.5 in Parks 
+```{r}
+
+#exact_extract - https://cran.r-project.org/web/packages/exactextractr/readme/README.html * see for other summary stats
+poly<-sf::st_as_sfc(nps) #converts to new type of poly
+
+#loop to calculate polygons means and save vector
+  for (i in 1:length (filenames)) {
+    raster<-raster(filenames[i], varname="DUSMASS25")#convert smoke data to raster
+    max<-exact_extract(raster, poly, 'max') #extracts mean for each park. Uses cells that intersect polygons. 
+   date<-str_sub(filenames[i], -13,-8) #strips down filename to just date
+  max<-as.data.frame(max) #convert to df
+  names(max)<-date #rename column with date
+  date_file<-paste0("/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output_max/",date)
+   newname<-paste0(date_file, ".csv")
+write.csv(max, newname, row.names = FALSE) #save as csv
+}
+
+#loads those .csv and makes into single df
+list_dates = list.files(path="/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output_max/", pattern="*.csv", full.names=TRUE)
+
+final_max<-list_dates %>%
+  map(read_csv) %>%
+  reduce(cbind)
+
+#append park code
+final_max<-data.frame(park=park_codes, final_max)
+
+#save
+write.csv(final_max, "/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/interm_data/final_max.csv", row.names = FALSE)
+
+```
