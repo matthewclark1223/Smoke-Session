@@ -9,3 +9,4 @@ VisDat<-VisDat %>%
   select(ParkName,UnitCode,Year,Month,RecreationVisits)
 
 write.csv(VisDat, file="~/Smoke_Proj/Data/VisitationDataClean.csv")
+nrow(VisDat)
