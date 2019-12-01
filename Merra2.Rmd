@@ -12,12 +12,15 @@ library(chron)
 library(lattice)
 library(RColorBrewer)
 
+<<<<<<< HEAD
 library(raster)
 library(rgdal)
 library(exactextractr)
 library(readr)
 library(plyr)
 library(purrr)
+=======
+>>>>>>> e03f34af84288c827b58b471b39f1ef073f4dd5e
 ```
 
 *For MATRIX* 
