@@ -14,6 +14,10 @@ library(RColorBrewer)
 
 library(raster)
 library(rgdal)
+library(exactextractr)
+library(readr)
+library(plyr)
+library(purrr)
 ```
 
 *For MATRIX* 
@@ -82,7 +86,8 @@ Stack netCDF
 ```{r}
 filenames <- list.files(path="/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/Merra2/",
                         pattern='*.nc',full.names=TRUE)
-smoke <- raster::stack(filenames, varname="DUSMASS25")
+#if you want to stack
+#smoke <- raster::stack(filenames, varname="DUSMASS25")
 
 ```
 
@@ -98,11 +103,45 @@ nps<-nps[nps@data$UNIT_TYPE=="National Park",]
 #remove National Park of American Samoa
 nps<-nps[nps@data$UNIT_CODE!="NPSA",]
 
+#reformat to use park codes later
+nps_df<-as.data.frame(nps)
+nps_df<-as.matrix(nps_df$UNIT_CODE)
+
+park_codes<-as.data.frame(nps_df)
+names(park_codes)<-"park"
+
 ```
 
 Average PM2.5 in Boundaries 
 ```{r}
-vals<-extract(all, nps)
+
+#exact_extract - https://cran.r-project.org/web/packages/exactextractr/readme/README.html * see for other summary stats
+poly<-sf::st_as_sfc(nps) #converts to new type of poly
+
+#loop to calculate polygons means and save vector
+  for (i in 1:length (filenames)) {
+    raster<-raster(filenames[i], varname="DUSMASS25")#convert smoke data to raster
+    mean<-exact_extract(raster, poly, 'mean') #extracts mean for each park
+   date<-str_sub(filenames[i], -13,-8) #strips down filename to just date
+  mean<-as.data.frame(mean) #convert to df
+  names(mean)<-date #rename column with date
+  date_file<-paste0("/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output/",date)
+   newname<-paste0(date_file, ".csv")
+write.csv(mean, newname, row.names = FALSE) #save as csv
+}
+
+#loads those .csv and makes into single df
+list_dates = list.files(path="/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/loop_output/", pattern="*.csv", full.names=TRUE)
+
+final_means<-list_dates %>%
+  map(read_csv) %>%
+  reduce(cbind)
+
+#append park code
+final_means<-data.frame(park=park_codes, final_means)
+
+#save
+write.csv(final_means, "/Volumes/GoogleDrive/My Drive/Local/Projects/Smoke/Smoke-Signal/interm_data/final_means.csv", row.names = FALSE)
 
 ```
 
