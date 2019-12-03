@@ -1,15 +1,21 @@
 library(tidyverse)
-SmokeDat<-read_csv("~/Smoke_Proj/interm_data/final_max.csv")
-View(SmokeDat)
-VisDat<-read_csv("~/Smoke_Proj/Data/VisitationDataClean.csv")
-View(VisDat)
+library(lme4)
+library(rstanarm)
+dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
+fit<-glmer(RecreationVisits~Smoke+(Smoke|UnitCode), 
+           family="poisson", data=dat)
 
-library(tidyr)
-sml<-gather(SmokeDat, Date, Smoke, X198001:X201910, factor_key = F)
-View(sml)
-sml$Year<-substr(sml$Date, 2,5)
-sml$Month<-substr(sml$Date, 6,7)
-x<-1:9
-VisDat$Month<-as.character(VisDat$Month)
-VisDat$Month<-ifelse(VisDat$Month %in% x,
-       paste0("0", VisDat$Month),paste0("", VisDat$Month)) 
+#singular fir try bayes
+options(mc.cores = 4)
+fit<-stan_glmer(RecreationVisits~Smoke+(Smoke|UnitCode), 
+           family="poisson", data=dat)
+
+
+#fit is singular ^^
+#standardize the variables?
+stdize<-function(x) {return((x-mean(x)/(2*sd(x))))}
+
+dat$stdSmoke<-stdize(dat$Smoke)
+
+fit<-glmer(RecreationVisits~stdSmoke+(stdSmoke|UnitCode), 
+           family="poisson", data=dat)
