@@ -1,9 +1,32 @@
 library(tidyverse)
 library(lme4)
 library(rstanarm)
+stdize<-function(x) {return((x-mean(x)/(2*sd(x))))}
 dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
-fit<-glmer(RecreationVisits~Smoke+(Smoke|UnitCode), 
-           family="poisson", data=dat)
+dat$CatCol<-paste0(dat$UnitCode,dat$Month)
+dat$Month<-as.character(dat$Month)
+dat$stdSmoke<-stdize(dat$Smoke)
+subdat<-dat[1:468,]
+
+
+fit<-glmer(RecreationVisits~stdSmoke+(1|CatCol),family="poisson",data=dat)
+
+
+
+fit<-glmer.nb(RecreationVisits~Smoke+(Smoke|UnitCode)+
+             (1|Month:UnitCode), 
+            data=dat)
+
+fit3<-glmer.nb(RecreationVisits ~ Smoke + UnitCode + 
+              (Smoke | UnitCode) + (1 |UnitCode) + (1 | Month),
+            data=dat)
+
+
+
+ggplot(dat, aes(x=Year, y=RecreationVisits, color=UnitCode))+
+  geom_smooth(alpha=0.5, method="lm", se=F)+
+  theme(legend.position = "none")
+
 
 #singular fir try bayes
 options(mc.cores = 4)
