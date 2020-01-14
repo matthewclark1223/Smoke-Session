@@ -5,11 +5,24 @@ stdize<-function(x) {return((x-mean(x)/(2*sd(x))))}
 dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
 dat$CatCol<-paste0(dat$UnitCode,dat$Month)
 dat$Month<-as.character(dat$Month)
-dat$stdSmoke<-stdize(dat$Smoke)
 subdat<-dat[1:468,]
 
+##standardization function doing some weird rounding thing
+## Doing it in 2 steps doesn't yeild the same problem
+dat$intSmoke<-dat$Smoke-mean(dat$Smoke)
+dat$stdsmoke<-intSmoke/(2*sd(dat$Smoke))
+##
 
-fit<-glmer(RecreationVisits~stdSmoke+(1|CatCol),family="poisson",data=dat)
+dat$Season<-ifelse(dat$Month %in% c("03","04","05"),"Spring",
+                   ifelse(dat$Month %in% c("06","07","08"),"Summer",
+                          ifelse(dat$Month %in% c("09","10","11"),"Fall","Winter")))
+
+dat$CatColS<-paste0(dat$UnitCode,dat$Season)
+
+
+
+options(mc.cores = parallel::detectCores())
+fit<-glmer.nb(RecreationVisits~stdsmoke+CatColS+(1|CatColS),data=dat)
 
 
 

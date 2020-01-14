@@ -57,3 +57,8 @@ ggplot(data=dat[dat$UnitCode %in% c("YOSE", "YELL","ACAD","GRSM","JOTR","SEQU"),
   geom_point(aes(color=Month))+facet_wrap(~ParkName, scales="free")
 
 
+stdize(head(dat$Smoke))
+stdize<-function(x) {return((x-mean(x)/(2*sd(x))))}
+2*sd(head(dat$Smoke))
+
+head(dat$Smoke)-mean(head(dat$Smoke))/(2*sd(head(dat$Smoke)))
