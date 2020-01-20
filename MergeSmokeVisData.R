@@ -30,5 +30,24 @@ names(sml)[1]<-"UnitCode"
 mdat<-merge(x=VisDat,y=sml,by=c("UnitCode", "Year","Month"))
 #remove columns we dont need            
 mdat<-mdat[,-c(4,7)]
+
+#Create a standardized smoke variable
+
+##standardization function doing some weird rounding thing
+## Doing it in 2 steps doesn't yeild the same problem
+zz<-dat$Smoke-mean(mdat$Smoke)
+mdat$stdsmoke<-zz/(2*sd(mdat$Smoke))
+
+#make month categorical
+mdat$Month<-as.character(mdat$Month)
+#Create a season variable
+mdat$Season<-ifelse(mdat$Month %in% c("03","04","05"),"Spring",
+                   ifelse(mdat$Month %in% c("06","07","08"),"Summer",
+                          ifelse(mdat$Month %in% c("09","10","11"),"Fall","Winter")))
+
+#make combined variables for park/season and park/month
+mdat$CatColS<-paste0(mdat$UnitCode,mdat$Season)
+
+mdat$CatColM<-paste0(mdat$UnitCode,mdat$Month)
 #create the csv
 write.csv(mdat, file="MergedDataComplete.csv")
