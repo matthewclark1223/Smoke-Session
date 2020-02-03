@@ -1,8 +1,9 @@
 library(tidyverse)
 library(lme4)
 library(rstanarm)
+library(MASS)
 options(mc.cores = parallel::detectCores())
-
+dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
 #models below increase in complexity..Currently, non of  them are converging using 
 #the lme4 package or with rstanarm
 #this may be a computational problem on my end though, rather than a model specification problem
@@ -26,3 +27,7 @@ fit4<-glmer.nb(RecreationVisits~stdsmoke+CatColM+(stdsmoke|CatColM),data=dat)
 
 #any of these models can be run using stan by specifying 
 #stan_glmer.nb instead of the glmer.nb function from lme4
+
+
+fit5<-glm.nb(RecreationVisits~stdsmoke, data=dat)
+

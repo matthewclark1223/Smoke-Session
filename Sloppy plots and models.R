@@ -3,10 +3,7 @@ library(lme4)
 library(rstanarm)
 library(MASS)
 dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
-dat$Month<-as.character(dat$Month)
-dat$ScaledSmoke<-scale(dat$Smoke)
 
-dat$CatColM<-paste0(dat$UnitCode,dat$Month)
 
 
 fit2<-glmer.nb(RecreationVisits~Smoke+(1|CatColM),data=dat)
