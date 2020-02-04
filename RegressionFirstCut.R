@@ -29,5 +29,24 @@ fit4<-glmer.nb(RecreationVisits~stdsmoke+CatColM+(stdsmoke|CatColM),data=dat)
 #stan_glmer.nb instead of the glmer.nb function from lme4
 
 
-fit5<-glm.nb(RecreationVisits~stdsmoke, data=dat)
+fit5<-glmer.nb(RecreationVisits~(1|CatColS)+(stdsmoke|UnitCode), data=dat)
+save(fit5,file="fit5.rda")
+summary(fit5)
+
+
+fit6<-glmer.nb(RecreationVisits~(1|CatColM)+(stdsmoke|UnitCode), data=dat)
+save(fit6,file="fit6.rda")
+
+fit7<-glmer.nb(RecreationVisits~(stdsmoke|CatColM), data=dat)
+save(fit7,file="fit7.rda")
+
+fit8<-glm.nb(RecreationVisits~stdsmoke+Month+UnitCode,data=dat)
+save(fit8,file="fit8.rda")
+
+fit9<-glm.nb(RecreationVisits~stdsmoke+Season+UnitCode,data=dat)
+save(fit9,file="fit9.rda")
+
+
+
+
 
