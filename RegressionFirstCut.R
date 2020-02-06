@@ -33,7 +33,7 @@ fit5<-glmer.nb(RecreationVisits~(1|CatColS)+(stdsmoke|UnitCode), data=dat)
 save(fit5,file="fit5.rda")
 summary(fit5)
 
-
+#best
 fit6<-glmer.nb(RecreationVisits~(1|CatColM)+(stdsmoke|UnitCode), data=dat)
 save(fit6,file="fit6.rda")
 
@@ -47,6 +47,6 @@ fit9<-glm.nb(RecreationVisits~stdsmoke+Season+UnitCode,data=dat)
 save(fit9,file="fit9.rda")
 
 
-
+coef(fit6)
 
 
