@@ -4,8 +4,6 @@ library(rstanarm)
 library(MASS)
 dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
 
-
-
 fit2<-glmer.nb(RecreationVisits~Smoke+(1|CatColM),data=dat)
 fit3<-glmer.nb(RecreationVisits~ScaledSmoke+(1|CatColM),data=dat)
 fit4<-glm(RecreationVisits~Smoke,family="poisson",data=dat)
