@@ -4,6 +4,7 @@ library(rstanarm)
 library(MASS)
 options(mc.cores = parallel::detectCores())
 dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
+dat$Year<-as.factor(dat$Year)
 #models below increase in complexity..Currently, non of  them are converging using 
 #the lme4 package or with rstanarm
 #this may be a computational problem on my end though, rather than a model specification problem
@@ -48,5 +49,28 @@ save(fit9,file="fit9.rda")
 
 
 coef(fit6)
+
+fit<-glmer.nb(RecreationVisits~
+                     (1|CatColM)+
+                     (stdsmoke|UnitCode)+
+                     Year,
+                   data=dat)
+
+
+
+
+fit<-glmer.nb(RecreationVisits~
+                stdsmoke+
+                
+                (Year+Season|UnitCode),
+              data=dat)
+
+
+
+
+fit<-glmer.nb(RecreationVisits~
+                     stdsmoke+
+                     (UnitCode*Season|Year),
+                   data=dat[1:1404,])
 
 
