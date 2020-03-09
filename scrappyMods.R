@@ -20,3 +20,14 @@ fitz<-stan_glmer(RecreationVisits~(stdsmoke|UnitCode)+
 
 MattDat<-dat[seq(1,nrow(dat),10),]
 
+
+
+
+
+
+
+
+
+
+
+

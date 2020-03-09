@@ -4,7 +4,8 @@ library(rstanarm)
 library(MASS)
 dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
 
-fit2<-glmer.nb(RecreationVisits~Smoke+(1|CatColM),data=dat)
+fit2<-glmer.nb(RecreationVisits~stdsmoke+(Season|UnitCode),data=dat)
+
 fit3<-glmer.nb(RecreationVisits~ScaledSmoke+(1|CatColM),data=dat)
 fit4<-glm(RecreationVisits~Smoke,family="poisson",data=dat)
 
@@ -33,7 +34,7 @@ ggplot(data=dat[13956:20891,],aes(x=Smoke,y=RecreationVisits))+
 
 ggplot(data=dat[20892:nrow(dat),],aes(x=Smoke,y=RecreationVisits))+
   geom_smooth(aes(color=Month),method="lm", se=F)+
-  facet_wrap(~ParkName,, scales="free")
+  facet_wrap(~ParkName, scales="free")
   
 ggplot(data=dat[dat$UnitCode %in% c("YOSE", "YELL","ACAD","GRSM","JOTR","SEQU"),],aes(x=Smoke,y=RecreationVisits))+
   geom_smooth(aes(color=Month),method="lm", se=F)+
