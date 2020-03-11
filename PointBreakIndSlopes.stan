@@ -9,8 +9,8 @@
 }
 parameters {
   real intercept;
-  real slope1; //the regression parameters
-  real slope2; //the regression parameters
+  real slope1[Nprk]; //the regression parameters
+  real slope2[Nprk]; //the regression parameters
   real<lower=0> phi; //the overdispersion parameters
   real<lower=0> sigma_pr;
   real ran_intercept[Nprk];
@@ -27,13 +27,14 @@ model {
   
 for(i in 1:N){
 if(smoke[i]<bkpoint){
-  count[i] ~ neg_binomial_2(exp(intercept+slope1*smoke[i]+ran_intercept[pcode[i]]) ,phi);
+  count[i] ~ neg_binomial_2(exp(intercept+slope1[pcode[i]]*smoke[i]+ran_intercept[pcode[i]]) ,phi);
 }
 else{
-  count[i] ~ neg_binomial_2(exp(intercept+slope1*bkpoint+(smoke[i]-bkpoint)*slope2+ran_intercept[pcode[i]]) ,phi);
+  count[i] ~ neg_binomial_2(exp(intercept+slope1[pcode[i]]*bkpoint+(smoke[i]-bkpoint)*slope2[pcode[i]]+ran_intercept[pcode[i]]) ,phi);
 }
 }
 for(j in 1:Nprk){
-  ran_intercept[j]~normal(0, sigma_pr);
+  ran_intercept[j]~normal(40000,sigma_pr);
 }
 }
+

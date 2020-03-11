@@ -2,18 +2,23 @@ library(tidyverse)
 library(rstan)
 dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
 #dat<-dat%>% filter(UnitCode %in% c("YOSE","YELL","GRTE"))
-dat<-dat%>% filter(UnitCode %in% c("YELL","GRTE"))
+dat<-dat%>% filter(UnitCode %in% c("YELL","GRTE","YOSE","GRCA","YOSE","ACAD"))
 #dat$id<-as.numeric(as.factor(dat$UnitCode )) for no seasonal intercept
 dat$id<-as.numeric(as.factor(dat$UnitCode ))
+
+stdize<-function(x) {return((x-mean(x)/(2*sd(x))))}
+
+dat<-dat%>%group_by(UnitCode)%>%
+  mutate(stdsmokepark=stdize(stdsmoke))
 
 data_list <- list(
   N = nrow(dat),
   Nprk = length(unique(dat$UnitCode)),
   count = dat$RecreationVisits,
-  smoke = dat$stdsmoke,
+  smoke = dat$stdsmokepark,
   pcode = dat$id)
 options(mc.cores=3)
-l<- stan( file="IndividualPointBreakIndSlopes.stan" , data=data_list,chains=3 )
+l<- stan( file="PointBreakIndSlopes.stan" , data=data_list,chains=3 )
 
 print( l , probs=c( (1-0.89)/2 , 1-(1-0.89)/2 ) )
 summary(l)
@@ -43,7 +48,13 @@ l<- stan( file="IndividualPointBreak.stan" , data=data_list,chains=3 )
 print( l , probs=c( (1-0.89)/2 , 1-(1-0.89)/2 ) )
 
 
-ggplot(data=dat,aes(x=stdsmoke,y=RecreationVisits,by=UnitCode))+
+dat<-read_csv("~/Smoke_Proj/Data/MergedDataComplete.csv")
+
+stdize<-function(x) {return((x-mean(x)/(2*sd(x))))}
+
+dat<-dat%>%group_by(UnitCode)%>%
+  mutate(stdsmokepark=stdize(stdsmoke))
+ggplot(data=dat,aes(x=stdsmokepark,y=RecreationVisits,by=UnitCode))+
   geom_point(alpha=0.2)+
   geom_smooth(aes(color=UnitCode),se=FALSE,alpha=0.1)+
   theme_classic()+ggtitle("max")

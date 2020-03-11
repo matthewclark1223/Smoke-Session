@@ -14,7 +14,7 @@ parameters {
   real<lower=0> phi; //the overdispersion parameters
   real<lower=0> sigma_pr;
   real ran_intercept[Nprk];
-  real<lower=-0.9,upper=0.84> bkpoint[Nprk];
+  real<lower=-1,upper=2> bkpoint[Nprk];
   
 }
 model {  
