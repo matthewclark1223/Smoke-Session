@@ -49,5 +49,16 @@ mdat$Season<-ifelse(mdat$Month %in% c("03","04","05"),"Spring",
 mdat$CatColS<-paste0(mdat$UnitCode,mdat$Season)
 
 mdat$CatColM<-paste0(mdat$UnitCode,mdat$Month)
+
+#create a variable for stdized smoke by park
+sdd1<-function(x) {return(x-mean(x))}
+sdd2<-function(x) {return(x/(2*sd(x)))}
+
+mdat<-mdat%>%group_by(UnitCode)%>%
+  mutate(deletelater=sdd1(Smoke))%>%
+  mutate(stdsmokepark=sdd2(deletelater))
+
+#delete int vector
+mdat<-mdat[,-11]
 #create the csv
 write.csv(mdat, file="MergedDataComplete.csv")
