@@ -35,7 +35,7 @@ mdat<-mdat[,-c(4,7)]
 
 ##standardization function doing some weird rounding thing
 ## Doing it in 2 steps doesn't yeild the same problem
-zz<-dat$Smoke-mean(mdat$Smoke)
+zz<-mdat$Smoke-mean(mdat$Smoke)
 mdat$stdsmoke<-zz/(2*sd(mdat$Smoke))
 
 #make month categorical
